@@ -71,8 +71,3 @@ Rails::Initializer.run do |config|
   # config.active_record.observers = :cacher, :garbage_collector
 
 end
-
-ExceptionNotifier.exception_recipients = %w(gremme@gmail.com ggonnell@yahoo.it)
-ExceptionNotifier.sender_address =
-  %("GenomeViewer Error" <support@genomeviewer.org>)
-
