@@ -1,42 +1,39 @@
 =begin rdoc
-Represent an annotation, the content of a gff3 file, and contains
-one or several sequence regions, described by the SequenceRegion model
 
-* data currently kept in two positions:
-   * metainformation ==> db-table "annotations"
-   * gff3 data       ==> filesystem
+An "annotation", meant as the base class for information contained 
+by a GFF3 file. 
 
-* the storage of the data in the filesystem is kept transparent to
-  the outside of this class through following two mechanisms:
+This is partially an ActiveRecord based class, even if the GFF3 file itself
+it's stored as is in the filesystem. An Annotation object has associations
+to SequenceRegion objects. 
 
- Example usage:
+In other words the database stores metainformation and the gff3 data itself 
+are kept as file. This is done as GenomeTools, used as a back-end, is working o
+on gff3 files. 
+
+The filesystem storage is kept transparent to the outside world as much as 
+possible. Here is an example usage to save data coming from an upload: 
 
     a = Annotation.new
     a.name = params[:gff3_file].original_filename
     a.user_id = session[:user]
     a.gff3_data = params[:gff3_file] # note: this can be any string
+    a.save
 
   --> the data params[:gff3_file] will be saved in a file
       the rest of the information is saved in the db table
 
- The filename is automatically calculated as $GFF3_STORAGE_PATH/userid_name
+ The filename is automatically calculated as <$GFF3_STORAGE_PATH>/user_id/name
 
   where:
 
-  * $GFF3_STORAGE_PATH: gives the basis path,
-    specified in the config/enviroments files.
-    It can be any folder in the filesystem.
+  * $GFF3_STORAGE_PATH: gives the basis path for storage as specified 
+    in the single config/enviroments files and is a filesystem path.
+  * user_id is a foreign key to the users table 
   * name is a metadata saved in a column in the database
 
-  --> if the column name is changed, the file is automatically
-      renamed after saving the object
-
-  the current filename is given by the method "gff3_data_storage"
-  however you should when possible use the following get/set methods
-  to access the data:
-
-  * gff3_data
-  * gff3_data=()
+ The methdos Annotation#gff3_data and Annotation#gff3_data=(data) are used 
+ to access the content of the file, not requiring to known its location.
 
 =end
 class Annotation < ActiveRecord::Base
