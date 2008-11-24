@@ -1,3 +1,8 @@
+#
+# This class defines a color through its RGB components.
+# It is used as aggregation for data saved as three separate
+# floats in the database. 
+#
 class Color
 
   Channels = [:red, :green, :blue]
