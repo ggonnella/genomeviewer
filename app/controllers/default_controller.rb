@@ -39,8 +39,7 @@ class DefaultController < ApplicationController
                                            params[:user][:password])
     if user
       session[:user]=user.id
-      flash[:info] ? flash.keep : (flash[:info] =
-        "Thank you for logging in, #{user.name}!")
+      flash[:info] ? flash.keep : (flash[:info] = welcome_msg(user))
       if !params[:back_to] or
       ["default", "register"].include? params[:back_to][:controller]
         redirect_to own_files_url
@@ -54,6 +53,23 @@ class DefaultController < ApplicationController
         "Do you want to <a href="+registration_url+">register</a> "+
         "a new account?"
       redirect_to params[:back_to]
+    end
+  end
+  
+private
+
+  def welcome_msg(user)
+    if user.guest? # guest account
+      "<p>Welcome. This is the <em>anonymous</em> guest account.</p>
+     <p><strong>Important Notice:</strong> You may upload files, but 
+     anybody logged in as guest will be able to see them, regardless 
+     of their status as private or public annotations, and even delete 
+     them or change their description. In addition any change
+     in the <em>account</em> section will not be saved.</p>
+     <p><small>You should consider logging out and register your own account
+     after testing the website using this guest account.</small></p>"
+    else
+      "Thank you for logging in, #{user.name}!"
     end
   end
 
