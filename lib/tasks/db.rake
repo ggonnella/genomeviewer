@@ -20,9 +20,19 @@ namespace :db do
       end
     end
   end
-  desc "Shortcut for db:schema:load"
-  task :load => ["db:schema:load"]
-  desc "Create the db schema and load example user"
+  namespace :guest_user do 
+    desc "Load standard guest user in the database"
+    task :load => :environment do 
+      file = "db/default_data/guest_user.yml"
+      example_user = YAML.load(IO.read file)
+      puts "-- create guest user"
+      u = User.create(guest_user)
+      puts "   -> done"
+    end
+  end
+  desc "Load schema (db:schema:load) and guest user"
+  task :load => ["db:schema:load", "db:guest_user:load"]
+  desc "Create the db schema and load example and guest users"
   task :load_with_foo => ["db:load", "db:example_user:load"]
 end
 
