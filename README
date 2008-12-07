@@ -12,6 +12,7 @@
         - Usually this can be done with "rake db:load"
         - If you want to preload an example user (login:foo/pass:foo)
           use "rake db:load_with_foo" instead
+        (a guest account will be in both cases also created)
    3.3 Start the web server (script/server)
    3.4 Optional: start the session daemon (script/session_daemon)
 
