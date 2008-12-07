@@ -1,6 +1,9 @@
 class AccountController < ApplicationController
 
   before_filter :enforce_login
+  before_filter :not_for_guests, 
+                :only => [:update_email, :update_password, 
+                          :update_public_data, :destroy]
 
   # update only with method post
   %w[email password public_data].each do |x|
@@ -15,9 +18,22 @@ class AccountController < ApplicationController
 
   append_before_filter :title
 
+protected
+   
+  ### filters ###
+
+  def not_for_guests
+    if @current_user.guest?
+      flash[:errors] = "The guest account exists for testing purposes. No changes were actually saved."
+      redirect_to account_url
+    end
+  end
+
   def title
     @title = "Account"
   end
+
+public 
 
   ### actions with a template ###
 
