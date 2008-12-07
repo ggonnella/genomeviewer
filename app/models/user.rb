@@ -29,6 +29,12 @@ class User < ActiveRecord::Base
     configuration(true)
   end
 
+  ### helper methods ###
+  
+  def guest?
+    username == "guest" 
+  end
+
   ### validations ###
 
   # login name
