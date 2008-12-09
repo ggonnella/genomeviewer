@@ -44,11 +44,11 @@ class FormatTest < ActiveSupport::TestCase
   end
 
   def test_tests_will_be_defined
-    assert Format.list_decimals.size > 0
+    assert Format.list_floats.size > 0
     assert Format.list_colors.size > 0
   end
 
-  Format.list_decimals.each do |f|
+  Format.list_floats.each do |f|
     define_method "test_#{f}" do
     args = ["format",f.to_s]
     assert_equal @conf.gt.get_num(*args), @format.send("default_#{f}")
