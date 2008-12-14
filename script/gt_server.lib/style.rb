@@ -65,7 +65,7 @@ module Style
   #
   def style_new
     st = GT::Style.new
-    style_file = File.expand_path("style/default.style",
+    style_file = File.expand_path("config/default.style",
                                   "#{File.dirname(__FILE__)}/../..")
     log "new style, trying to load #{style_file}", 2
     st.load_file style_file
