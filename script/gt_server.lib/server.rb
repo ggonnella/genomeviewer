@@ -1,7 +1,7 @@
 $: << ENV['GTRUBY']
 require 'gtruby'
 require File.dirname(__FILE__)+"/parsing.rb"
-require File.dirname(__FILE__)+"/configuration.rb"
+require File.dirname(__FILE__)+"/style.rb"
 require File.dirname(__FILE__)+"/output.rb"
 require File.dirname(__FILE__)+"/get_hotspots.rb"
 
@@ -10,7 +10,7 @@ require File.dirname(__FILE__)+"/get_hotspots.rb"
 # GenomeTools Ruby bindings GTRuby.
 #
 # Additionally it is responsible for caching
-# feature_index, config structures and image maps
+# feature_index, style structures and image maps
 #
 class GTServerClass
 
@@ -29,7 +29,7 @@ class GTServerClass
       :on,  #feature_indeces, add_introns on
       :off, #feature_indeces, add_introns off
       :ft,  #feature_types
-      :c,   #config objecs
+      :s,   #style objecs
       :img, #png images
       :map, #image maps of png images
       ]
@@ -67,7 +67,7 @@ class GTServerClass
   end
 
   include Parsing
-  include Configuration
+  include Style
   include Output
 
 end

@@ -17,13 +17,13 @@ module Output
   # - filename:        string
   # - seq_id:          string
   # - range:           a ruby Range object
-  # - config_obj:      a GT::Style object
+  # - style_obj:       a GT::Style object
   # - width:           integer (width in pixel)
   # - add_introns:     boolean (activate add introns mode?)
-  # - config_override: an array of options that will override
-  #                    the options in the config object
+  # - style_override:  an array of options that will override
+  #                    the options in the style object
   #
-  # each option in config_override is an array:
+  # each option in style_override is an array:
   #
   #     [gt_ruby_type, section, attribute, value]
   #
@@ -37,23 +37,23 @@ module Output
                            filename,
                            seqid,
                            range,
-                           config_obj,
+                           style_obj,
                            width,
                            add_introns,
-                           config_override = [])
+                           style_override = [])
 
     log "generating img/map #{key}"
     log filename, 2
     log "#{seqid}, #{range.inspect}", 2
     time = Benchmark.measure do
-      config_copy = config_obj.clone
-      config_override.each do |option|
+      style_copy = style_obj.clone
+      style_override.each do |option|
         gt_ruby_type, section,
         attribute, value = option
         if value.nil?
-          config_copy.unset(section, attribute)
+          style_copy.unset(section, attribute)
         else
-          config_copy.send("set_#{gt_ruby_type}", section, attribute, value)
+          style_copy.send("set_#{gt_ruby_type}", section, attribute, value)
         end
       end
       mode = add_introns ? :on : :off
@@ -61,9 +61,9 @@ module Output
       gtrange = fix.get_range_for_seqid(seqid)
       gtrange.start = range.first
       gtrange.end   = range.last
-      diagram = GT::Diagram.new(fix, seqid, gtrange, config_copy)
+      diagram = GT::Diagram.new(fix, seqid, gtrange, style_copy)
       info = GT::ImageInfo.new
-      canvas = GT::CanvasCairoFile.new(config_copy, width, info)
+      canvas = GT::CanvasCairoFile.new(style_copy, width, info)
       diagram.sketch(canvas)
       lock(:map) do
         @cache[:map][key] = info
