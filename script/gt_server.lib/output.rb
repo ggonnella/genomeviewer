@@ -64,10 +64,11 @@ module Output
       gtrange = fix.get_range_for_seqid(seqid)
       gtrange.start = range.first
       gtrange.end   = range.last
-      diagram = GT::Diagram.new(fix, seqid, gtrange, style_copy)
+      diagram = GT::Diagram.from_index(fix, seqid, gtrange, style_copy)
       info    = GT::ImageInfo.new
-      canvas  = GT::CanvasCairoFile.new(style_copy, width, info)
-      diagram.sketch(canvas)
+      layout  = GT::Layout.new(diagram, width, style_copy)
+      canvas  = GT::CanvasCairoFile.new(style_copy, width, layout.get_height, info)
+      layout.sketch(canvas)
       lock(:map) do
         @cache[:map][key] = info
       end
