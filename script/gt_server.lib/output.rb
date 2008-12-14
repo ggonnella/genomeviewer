@@ -4,6 +4,7 @@
 # these methods assume that the parameters are correct,
 # that is they must be validated at higher level or can
 # bring the gtserver to crash
+#
 module Output
 
   require "benchmark"
@@ -13,7 +14,7 @@ module Output
   # identifier which can be used subsequently to fetch them
   #
   # parameters:
-  # - key:             an unique identifier
+  # - key:             indentifier of the parameter set
   # - filename:        string
   # - seq_id:          string
   # - range:           a ruby Range object
@@ -29,6 +30,8 @@ module Output
   #
   # if value.nil? the attribute will be unset, otherwise set to
   # the given value
+  #
+  # gt_ruby_type is one of: bool, cstr, color, num
   #
   # returns true if the image and map could be successfully generated,
   # false if any exception was raised during the generation
@@ -62,8 +65,8 @@ module Output
       gtrange.start = range.first
       gtrange.end   = range.last
       diagram = GT::Diagram.new(fix, seqid, gtrange, style_copy)
-      info = GT::ImageInfo.new
-      canvas = GT::CanvasCairoFile.new(style_copy, width, info)
+      info    = GT::ImageInfo.new
+      canvas  = GT::CanvasCairoFile.new(style_copy, width, info)
       diagram.sketch(canvas)
       lock(:map) do
         @cache[:map][key] = info
@@ -79,6 +82,9 @@ module Output
     return false
   end
 
+  #
+  # empty the img/map saved under a key value
+  #
   def img_and_map_destroy(key)
     d = []
     [:map, :img].each do |mode|
@@ -116,12 +122,18 @@ module Output
     end
   end
 
+  #
+  # is there a generated img for the key 'key'?
+  #
   def img_exists?(key)
     lock(:img) do
       @cache[:img].has_key?(key)
     end
   end
 
+  #
+  # is there a generated map for the key 'key'?
+  #
   def map_exists?(key)
     lock(:map) do
       @cache[:map].has_key?(key)
