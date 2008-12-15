@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 30) do
+ActiveRecord::Schema.define(:version => 31) do
 
   create_table "annotations", :force => true do |t|
     t.string  "name",        :default => "",    :null => false
@@ -32,44 +32,44 @@ ActiveRecord::Schema.define(:version => 30) do
   end
 
   create_table "feature_types", :force => true do |t|
-    t.string  "name"
-    t.float   "fill_red"
-    t.float   "fill_green"
-    t.float   "fill_blue"
-    t.float   "stroke_red"
-    t.float   "stroke_green"
-    t.float   "stroke_blue"
-    t.float   "stroke_marked_red"
-    t.float   "stroke_marked_green"
-    t.float   "stroke_marked_blue"
-    t.integer "style_key"
-    t.boolean "collapse_to_parent"
-    t.boolean "split_lines"
-    t.integer "max_capt_show_width"
-    t.integer "max_num_lines"
-    t.integer "configuration_id"
-    t.integer "max_show_width"
+    t.string  "name",                :default => ""
+    t.float   "fill_red",            :default => 0.0
+    t.float   "fill_green",          :default => 0.0
+    t.float   "fill_blue",           :default => 0.0
+    t.float   "stroke_red",          :default => 0.0
+    t.float   "stroke_green",        :default => 0.0
+    t.float   "stroke_blue",         :default => 0.0
+    t.float   "stroke_marked_red",   :default => 0.0
+    t.float   "stroke_marked_green", :default => 0.0
+    t.float   "stroke_marked_blue",  :default => 0.0
+    t.integer "style_key",           :default => 0
+    t.boolean "collapse_to_parent",  :default => false
+    t.boolean "split_lines",         :default => false
+    t.integer "max_capt_show_width", :default => 0
+    t.integer "max_num_lines",       :default => 0
+    t.integer "configuration_id",    :default => 0
+    t.integer "max_show_width",      :default => 0
   end
 
   create_table "formats", :force => true do |t|
-    t.float   "margins"
-    t.float   "bar_height"
-    t.float   "bar_vspace"
-    t.float   "track_vspace"
-    t.float   "scale_arrow_width"
-    t.float   "scale_arrow_height"
-    t.float   "arrow_width"
-    t.float   "stroke_width"
-    t.float   "stroke_marked_width"
-    t.boolean "show_grid"
-    t.float   "min_len_block"
-    t.float   "track_title_color_red"
-    t.float   "track_title_color_green"
-    t.float   "track_title_color_blue"
-    t.float   "default_stroke_color_red"
-    t.float   "default_stroke_color_green"
-    t.float   "default_stroke_color_blue"
-    t.integer "configuration_id"
+    t.float   "margins",                    :default => 0.0
+    t.float   "bar_height",                 :default => 0.0
+    t.float   "bar_vspace",                 :default => 0.0
+    t.float   "track_vspace",               :default => 0.0
+    t.float   "scale_arrow_width",          :default => 0.0
+    t.float   "scale_arrow_height",         :default => 0.0
+    t.float   "arrow_width",                :default => 0.0
+    t.float   "stroke_width",               :default => 0.0
+    t.float   "stroke_marked_width",        :default => 0.0
+    t.boolean "show_grid",                  :default => false
+    t.float   "min_len_block",              :default => 0.0
+    t.float   "track_title_color_red",      :default => 0.0
+    t.float   "track_title_color_green",    :default => 0.0
+    t.float   "track_title_color_blue",     :default => 0.0
+    t.float   "default_stroke_color_red",   :default => 0.0
+    t.float   "default_stroke_color_green", :default => 0.0
+    t.float   "default_stroke_color_blue",  :default => 0.0
+    t.integer "configuration_id",           :default => 0
   end
 
   create_table "sequence_regions", :force => true do |t|
@@ -89,14 +89,5 @@ ActiveRecord::Schema.define(:version => 30) do
     t.integer "public_annotations_count",               :default => 0,  :null => false
     t.string  "username",                 :limit => 64, :default => "", :null => false
   end
-
-  create_table "uuid_logs", :force => true do |t|
-    t.string   "uuid",       :limit => 36
-    t.text     "args"
-    t.datetime "created_at"
-  end
-
-  add_index "uuid_logs", ["uuid"], :name => "index_uuid_logs_on_uuid"
-  add_index "uuid_logs", ["created_at"], :name => "index_uuid_logs_on_created_at"
 
 end
