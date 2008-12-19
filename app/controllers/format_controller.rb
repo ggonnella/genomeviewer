@@ -15,7 +15,7 @@ class FormatController < ApplicationController
 
     # the columns array is built dinamically, using the lists
     # provided by the FeatureType model
-    columns = [:width] + Format.configuration_attributes
+    columns = [:width] + Format.style_attributes
 
     config.columns = columns
     config.columns[:width].label = "Default width"
@@ -39,7 +39,7 @@ private
   # show only current_user's record in list
   #
   def conditions_for_collection
-    ["configuration_id = ?", @current_user.configuration.id]
+    ["style_id = ?", @current_user.style.id]
   end
 
   #
@@ -48,7 +48,7 @@ private
   #
   def before_update_save(record)
     record.upload
-    record.configuration.save # to save the width
+    record.style.save # to save the width
   end
 
   #
@@ -56,7 +56,7 @@ private
   #
   def own_record?
     if params["id"] # == only for actions working on a single record
-      record_owner = Format.find(params["id"]).configuration.user
+      record_owner = Format.find(params["id"]).style.user
       redirect_to logout_url unless record_owner == current_user
     end
   end

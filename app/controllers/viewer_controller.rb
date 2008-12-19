@@ -132,13 +132,13 @@ private
         params[:end_pos].to_i
       end
       
-    # get width from the params, the session, the current user configuration or 
+    # get width from the params, the session, the current user style or 
     # a default value if everything else fails
     @width = 
       case 
       when params[:width] : params[:width].to_i
       when session[:width] : session[:width]
-      when @current_user : @current_user.configuration.width
+      when @current_user : @current_user.style.width
       else
         900
       end
@@ -273,11 +273,11 @@ private
 
   def style_obj
     @current_user ?
-      # logged in: use the user config object
-      @current_user.configuration.gt :
-      # not logged in: use the config object of
+      # logged in: use the user style object
+      @current_user.style.gt :
+      # not logged in: use the style object of
       # the user to whom the annotation belongs
-      @annotation.user.configuration.gt
+      @annotation.user.style.gt
   end
     
   def style_override

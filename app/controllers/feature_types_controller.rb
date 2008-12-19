@@ -20,7 +20,7 @@ class FeatureTypesController < ApplicationController
     FeatureType.list_colors.each do |c|
       config.columns[c].sort_by :sql => "#{c}_red, #{c}_green, #{c}_blue"
     end
-    FeatureType.list_styles.each do |s|
+    FeatureType.list_block_styles.each do |s|
       config.columns[s].sort_by :sql => "#{s}_key"
     end
 
@@ -32,7 +32,7 @@ private
   # show only current_user's records in list
   #
   def conditions_for_collection
-    ["configuration_id = ?", @current_user.configuration.id]
+    ["style_id = ?", @current_user.style.id]
   end
 
   #
@@ -49,7 +49,7 @@ private
   #
   def own_record?
     if params["id"] # == only for actions working on a single record
-      record_owner = FeatureType.find(params["id"]).configuration.user
+      record_owner = FeatureType.find(params["id"]).style.user
       redirect_to logout_url unless record_owner == current_user
     end
   end
