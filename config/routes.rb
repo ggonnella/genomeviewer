@@ -23,8 +23,8 @@ ActionController::Routing::Routes.draw do |map|
                         :controller => "register",
                         :action => "recover_password"
   
-  map.configuration 'configuration',
-                    :controller => "configuration"
+  map.style 'style',
+            :controller => "style"
                     
   map.account 'account',
               :controller => "account"
@@ -42,7 +42,7 @@ ActionController::Routing::Routes.draw do |map|
   
   controllers = 
       %w[account 
-         configuration 
+         style 
          default 
          feature_types
          format

@@ -1,5 +1,5 @@
 #
-# This controller is responsible for the user-specific
+# This controller is responsible for the user-specific style
 # settings page.
 #
 # The login is enforced, as these settings have a
@@ -9,7 +9,7 @@
 # embedding two active scaffolds (feature_types and format) that
 # have each its own controller
 #
-class ConfigurationController < ApplicationController
+class StyleController < ApplicationController
 
   before_filter :enforce_login
   append_before_filter :title
@@ -17,7 +17,7 @@ class ConfigurationController < ApplicationController
   ### actions with a template ###
 
   #
-  # configuration page, embedding feature_types and format active scaffolds
+  # style page, embedding feature_types and format active scaffolds
   #
   # see +FeatureTypesController+ and +FormatController+
   #
@@ -27,7 +27,7 @@ class ConfigurationController < ApplicationController
 private
 
   def title
-    @title = "Configuration"
+    @title = "Style Settings"
   end
 
 end

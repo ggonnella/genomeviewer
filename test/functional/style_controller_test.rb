@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ConfigurationControllerTest < ActionController::TestCase
+class StyleControllerTest < ActionController::TestCase
 
   fixtures 'users'
 
@@ -18,7 +18,7 @@ class ConfigurationControllerTest < ActionController::TestCase
 
   def test_logged_in_access
     get :index, {}, @in
-    assert_template "configuration/index"
+    assert_template "style/index"
   end
 
 end
