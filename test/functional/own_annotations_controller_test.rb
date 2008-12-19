@@ -7,7 +7,7 @@ class OwnAnnotationsControllerTest < ActionController::TestCase
   def setup
     assert user_setup # see test_helper
     @_another_u = users('a_test')
-    @_another_u.configuration = Configuration.new
+    @_another_u.style = Style.new
   end
 
   def test_unlogged_access_refused
