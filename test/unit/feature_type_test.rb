@@ -90,9 +90,9 @@ class FeatureTypeTest < ActiveSupport::TestCase
     args = ["a_test","block_style"]
     remote = @style.gt.get_cstr(*args)
     assert_equal remote.nil? ? BlockStyle.undefined : remote.to_block_style,
-                 @ft.default_style
+                 @ft.default_block_style
     assert_not_equal "caret", @style.gt.get_cstr(*args)
-    @ft.sync_style = "caret".to_block_style
+    @ft.sync_block_style = "caret".to_block_style
     assert_equal "caret", @ft.block_style.string
     assert_equal "caret", @style.gt.get_cstr(*args)
   end
