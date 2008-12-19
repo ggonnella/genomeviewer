@@ -3,7 +3,7 @@ module GTObjectsAssertions
   #
   # "duck type" check if an object could be a GT::Style
   #
-  def assert_gt_config(obj, message = nil)
+  def assert_gt_style(obj, message = nil)
     message ||= "It does not look like a GT::Style"
     assert_block(message) do
       types = ["bool", "color", "cstr", "num"]
@@ -20,7 +20,7 @@ module GTObjectsAssertions
   def assert_gt_color(obj, message = nil)
     message ||= "It does not look like a GT::Color"
     assert_block(message) do
-      methods = ["red","green","blue","red=","green=","blue="]
+      methods = ["red","green","blue","red=","green=","blue=", "alpha", "alpha="]
       methods.all?{|m| obj.respond_to?(m)}
     end
   end

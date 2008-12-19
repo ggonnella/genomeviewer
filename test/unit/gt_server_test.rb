@@ -67,35 +67,35 @@ class GtServerTest < ActiveSupport::TestCase
                  GTServer.gff3_range(file, "test1")
   end
 
-  ### module Configuration ###
+  ### module Style ###
 
-  def test_config_new
-    assert_gt_config GTServer.config_new
+  def test_style_new
+    assert_gt_style GTServer.style_new
   end
 
-  def test_config_default
-    assert_gt_config GTServer.config_default
+  def test_style_default
+    assert_gt_style GTServer.style_default
   end
 
-  def test_config_cache
-    GTServer.config_uncache(1)
-    assert_nil GTServer.config_uncache(1)
-    assert !GTServer.config_cached?(1)
-    assert_gt_config GTServer.config(1)
-    assert GTServer.config_cached?(1)
-    assert_not_nil GTServer.config_uncache(1)
+  def test_style_cache
+    GTServer.style_uncache(1)
+    assert_nil GTServer.style_uncache(1)
+    assert !GTServer.style_cached?(1)
+    assert_gt_style GTServer.style(1)
+    assert GTServer.style_cached?(1)
+    assert_not_nil GTServer.style_uncache(1)
   end
 
-  def test_independent_config_changes
-    config1 = GTServer.config(1)
-    config2 = GTServer.config(2)
-    # set margin of config1 to 20 and of config2 to 40
-    config1.set_num("format", "margins", 20)
-    config2.set_num("format", "margins", 40)
-    assert GTServer.config_cached?(1)
-    assert GTServer.config_cached?(2)
-    assert_not_equal config1.get_num("format", "margins"),
-                     config2.get_num("format", "margins")
+  def test_independent_style_changes
+    style1 = GTServer.style(1)
+    style2 = GTServer.style(2)
+    # set margin of style1 to 20 and of style2 to 40
+    style1.set_num("format", "margins", 20)
+    style2.set_num("format", "margins", 40)
+    assert GTServer.style_cached?(1)
+    assert GTServer.style_cached?(2)
+    assert_not_equal style1.get_num("format", "margins"),
+                     style2.get_num("format", "margins")
   end
 
   def test_color_new
@@ -107,7 +107,7 @@ class GtServerTest < ActiveSupport::TestCase
   def test_generate_and_destroy
     uuid = UUID.random_create.to_s
     args = uuid, "test/gff3/little1.gff3", "test1", (1000..9000),
-           GTServer.config_default, 100, false
+           GTServer.style_default, 100, false
     assert !GTServer.img_exists?(uuid)
     assert !GTServer.map_exists?(uuid)
     assert GTServer.img_and_map_generate(*args)
@@ -118,14 +118,14 @@ class GtServerTest < ActiveSupport::TestCase
 
   def test_image
     filename = "test/gff3/standard_gene_with_introns_as_tree.gff3"
-    config = GTServer.config_default
+    style = GTServer.style_default
     [true, false].each do |add_introns|
       uuid = UUID.random_create.to_s
       GTServer.img_and_map_generate(uuid,
                                     filename,
                                     "ctg123",
                                     (1..1497228),
-                                    config,
+                                    style,
                                     100,
                                     add_introns)
       png_data = GTServer.img(uuid)
@@ -139,7 +139,7 @@ class GtServerTest < ActiveSupport::TestCase
   def test_image_map
     uuid = UUID.random_create.to_s
     args = uuid, "test/gff3/little1.gff3", "test1", (1000..9000),
-           GTServer.config_default, 100, false
+           GTServer.style_default, 100, false
     GTServer.img_and_map_generate(*args)
     info = GTServer.map(uuid)
     info.each_hotspot do |a,b,c,d,feat|
