@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 31) do
+ActiveRecord::Schema.define(:version => 32) do
 
   create_table "annotations", :force => true do |t|
     t.string  "name",        :default => "",    :null => false
@@ -17,11 +17,6 @@ ActiveRecord::Schema.define(:version => 31) do
     t.text    "description"
     t.boolean "public",      :default => false, :null => false
     t.boolean "add_introns", :default => true,  :null => false
-  end
-
-  create_table "configurations", :force => true do |t|
-    t.integer "user_id"
-    t.integer "width",   :default => 800, :null => false
   end
 
   create_table "feature_type_in_annotations", :force => true do |t|
@@ -42,12 +37,12 @@ ActiveRecord::Schema.define(:version => 31) do
     t.float   "stroke_marked_red",   :default => 0.0
     t.float   "stroke_marked_green", :default => 0.0
     t.float   "stroke_marked_blue",  :default => 0.0
-    t.integer "style_key",           :default => 0
+    t.integer "block_style_key",     :default => 0
     t.boolean "collapse_to_parent",  :default => false
     t.boolean "split_lines",         :default => false
     t.integer "max_capt_show_width", :default => 0
     t.integer "max_num_lines",       :default => 0
-    t.integer "configuration_id",    :default => 0
+    t.integer "style_id",            :default => 0
     t.integer "max_show_width",      :default => 0
   end
 
@@ -69,7 +64,7 @@ ActiveRecord::Schema.define(:version => 31) do
     t.float   "default_stroke_color_red",   :default => 0.0
     t.float   "default_stroke_color_green", :default => 0.0
     t.float   "default_stroke_color_blue",  :default => 0.0
-    t.integer "configuration_id",           :default => 0
+    t.integer "style_id",                   :default => 0
   end
 
   create_table "sequence_regions", :force => true do |t|
@@ -78,6 +73,11 @@ ActiveRecord::Schema.define(:version => 31) do
     t.integer "seq_begin",     :default => 0,  :null => false
     t.integer "seq_end",       :default => 0,  :null => false
     t.text    "description"
+  end
+
+  create_table "styles", :force => true do |t|
+    t.integer "user_id"
+    t.integer "width",   :default => 800, :null => false
   end
 
   create_table "users", :force => true do |t|
