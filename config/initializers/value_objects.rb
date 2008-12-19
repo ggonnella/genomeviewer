@@ -5,4 +5,4 @@
 # by listing them here
 #
 require File.dirname(__FILE__) + '/../../app/models/color.rb'
-require File.dirname(__FILE__) + '/../../app/models/style.rb'
+require File.dirname(__FILE__) + '/../../app/models/block_style.rb'
