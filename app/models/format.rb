@@ -1,7 +1,7 @@
 class Format < ActiveRecord::Base
-  include GTRubyConfigurator
+  include GTStyleInterface
 
-  belongs_to :configuration
+  belongs_to :style
 
   set_section "format"
   set_colors :track_title_color, :default_stroke_color
@@ -10,8 +10,8 @@ class Format < ActiveRecord::Base
          :scale_arrow_width, :scale_arrow_height, :arrow_width,
          :stroke_width, :stroke_marked_width, :min_len_block
 
-  delegate :width, :to => :configuration
-  delegate :width=, :to => :configuration
+  delegate :width, :to => :style
+  delegate :width=, :to => :style
 
   def self.helptext(attribute_name)
     case attribute_name.to_sym

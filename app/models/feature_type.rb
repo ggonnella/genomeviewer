@@ -1,15 +1,15 @@
 class FeatureType < ActiveRecord::Base
-  include GTRubyConfigurator
+  include GTStyleInterface
 
   set_section { self.name }
   set_colors :fill, :stroke, :stroke_marked
   set_bools :collapse_to_parent, :split_lines
   set_integers :max_show_width, :max_capt_show_width, :max_num_lines
-  set_styles :style
+  set_block_styles :block_style
 
-  belongs_to :configuration
+  belongs_to :style
   has_many :feature_type_in_annotations
   has_many :annotations, :through => :feature_type_in_annotations
-  validates_uniqueness_of :name, :scope => :configuration_id
+  validates_uniqueness_of :name, :scope => :style_id
 
 end

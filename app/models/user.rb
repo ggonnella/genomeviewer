@@ -2,7 +2,7 @@ class User < ActiveRecord::Base
 
   ### associations ###
   has_many :annotations, :dependent => :destroy
-  has_one :configuration, :dependent => :destroy
+  has_one :style, :dependent => :destroy
 
   ### callbacks ###
 
@@ -24,9 +24,9 @@ class User < ActiveRecord::Base
 
   ### configuration methods ###
 
-  def reset_configuration
-    configuration = Configuration.create(:user => self)
-    configuration(true)
+  def reset_style
+    style = Style.create(:user => self)
+    style(true)
   end
 
   ### helper methods ###

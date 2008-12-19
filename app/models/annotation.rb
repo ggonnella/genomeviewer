@@ -136,11 +136,11 @@ class Annotation < ActiveRecord::Base
   def create_feature_types
     ft_names = GTServer.gff3_feature_types(File.expand_path(gff3_data_storage))
     ft_names.each do |ft_name|
-      ft = user.configuration.feature_types.find_by_name(ft_name)
+      ft = user.style.feature_types.find_by_name(ft_name)
       unless ft
         ft = FeatureType.default_new(:name => ft_name,
-                   :configuration_id => user.configuration.id)
-        user.configuration.feature_types(true) # update cache
+                   :style_id => user.style.id)
+        user.style.feature_types(true) # update cache
       end
       feature_types << ft
     end
