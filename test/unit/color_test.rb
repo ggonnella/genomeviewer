@@ -74,27 +74,31 @@ class ColorTest < Test::Unit::TestCase
   def test_equality
     c1 = Color.new(0.0, 0.0, 0.0)
     assert_equal c1, c1
-    c1a = Color.new(0.0, 0.0, 0.0, 0.0)
-    assert_equal c1a, c1a
     c2 = Color.new(0.0, 0.0, 0.0)
     assert_not_equal c1.object_id, c2.object_id
     assert_equal c1, c2
-    c2a = Color.new(0.0, 0.0, 0.0, 0.0)
-    assert_not_equal c1a.object_id, c2a.object_id
-    assert_equal c1a, c2a
     c3 = Color.new(1.0, 1.0, 1.0)
     assert_not_equal c1, c3
     assert_not_nil c1==c3
     assert_nil c1=="string"
     assert_not_equal c1, "string"
+    # undefined are all equal to one another:
+    assert_equal Color.new(nil, nil, nil), Color.new("a","b","c")
+    assert_equal Color.new("","",""), Color.new(nil,[],{})
+  end
+  
+  def test_equality_alpha
+    c1a = Color.new(0.0, 0.0, 0.0, 0.0)
+    assert_equal c1a, c1a
+    c2a = Color.new(0.0, 0.0, 0.0, 0.0)
+    assert_not_equal c1a.object_id, c2a.object_id
+    assert_equal c1a, c2a
     c3a = Color.new(1.0, 1.0, 1.0, 1.0)
     assert_not_equal c1a, c3a
     assert_not_nil c1a==c3a
     assert_nil c1a=="string"
     assert_not_equal c1a, "string"
     # undefined are all equal to one another:
-    assert_equal Color.new(nil, nil, nil), Color.new("a","b","c")
-    assert_equal Color.new("","",""), Color.new(nil,[],{})
     assert_equal Color.new(nil, nil, nil, nil), Color.new("a","b","c","d")
     assert_equal Color.new("","","", ""), Color.new(nil,[],{},1)
   end
@@ -108,7 +112,9 @@ class ColorTest < Test::Unit::TestCase
     assert_equal gvc.blue, gtc.blue
     # undefined gt color
     assert_gt_color Color.new(nil,nil,nil).to_gt
-    # alpha
+  end
+  
+  def test_conversion_to_gt_color_alpha
     gvc = Color.new(0.1, 0.2, 0.3, 0.4)
     gtc = gvc.to_gt
     assert_gt_color gtc
@@ -127,6 +133,9 @@ class ColorTest < Test::Unit::TestCase
     c2 = Color(c1)
     assert_not_equal c1.object_id, c2.object_id
     assert_equal c1, c2
+  end
+  
+  def test_conversion_to_color_alpha
     c1a = Color.new(0.1, 0.2, 0.3, 0.4)
     assert_nothing_raised { Color(c1a) }
     c2a = Color(c1a)
@@ -143,6 +152,9 @@ class ColorTest < Test::Unit::TestCase
     assert_equal gtc.red, gvc.red
     assert_equal gtc.green, gvc.green
     assert_equal gtc.blue, gvc.blue
+  end
+  
+  def test_conversion_from_gt_color_alpha
     gtc = GTServer.color_new
     gtc.red = 0.1
     gtc.green = 0.2
@@ -161,18 +173,23 @@ class ColorTest < Test::Unit::TestCase
     assert Color.new(nil, nil, nil).undefined?
     assert_equal Color.new(nil, nil, nil), Color.undefined
     assert Color.undefined.undefined?
+  end
+  
+  def test_undefined_alpha
     assert !Color.new(1, 1, 1, 1).undefined?
     assert Color.new(1, 1, nil, 1).undefined?
     assert Color.new(nil, nil, nil, nil).undefined?
     assert_equal Color.new(nil, nil, nil, nil), Color.undefined
-    assert Color.undefined.undefined?
   end
 
   def test_to_hex
     assert_equal '#001ACC', Color.new(0, 0.1, 0.8).to_hex
     assert_equal 'undefined', Color.new(nil, nil, nil).to_hex
-    assert_equal '#001ACC00', Color.new(0, 0.1, 0.8, 0).to_hex
-    assert_equal 'undefined', Color.new(nil, nil, nil, nil).to_hex
+  end
+  
+  def test_to_hex_alpha
+    assert_equal '#001ACC00', Color.new(0, 0.1, 0.8, 0).to_hex(true)
+    assert_equal 'undefined', Color.new(nil, nil, nil, nil).to_hex(true)
   end
 
   def test_from_hex
@@ -180,6 +197,9 @@ class ColorTest < Test::Unit::TestCase
     assert_equal Color.new(0, 1, 1), '#00fFff'.to_color
     assert_equal Color.new(nil, nil, nil), '#00000'.to_color
     assert_equal Color.new(nil, nil, nil), 'anything else'.to_color
+  end
+  
+  def test_from_hex_alpha
     assert_equal Color.new(0, 0, 0, 0), '#00000000'.to_color
     assert_equal Color.new(0, 1, 1, 1), '#00fFffff'.to_color
     assert_equal Color.new(nil, nil, nil, nil), '#00000'.to_color
