@@ -1,30 +1,30 @@
 #
-# defines a DSL to use in classes which configure a "section" of the
-# GT::Style object returned by the #configuration.gt method chain
+# defines a DSL to use in classes which define a "section" of the
+# GT::Style object returned by the #style.gt method chain
 #
-module GTRubyConfigurator
+module GTStyleInterface
 
   #
-  # #configuration_attributes returns the attributes in the order
+  # #style_attributes returns the attributes in the order
   # specified by this array (within each list in alphabetic order)
   #
-  ConfigTypes = [:styles, :colors, :floats, :integers, :bools]
+  StyleTypes = [:block_styles, :colors, :floats, :integers, :bools]
 
-  GTRubyType =
+  GTType =
   {
     :floats   => :num,
     :integers => :num,
     :colors   => :color,
     :bools    => :bool,
-    :styles   => :cstr
+    :block_styles   => :cstr
   }
 
   def self.included(klass)
 
     klass.class_eval do
-      # initialize lists of configuration attributes
+      # initialize lists of style attributes
       @list = {}
-      ConfigTypes.each {|t| @list[t] = [] }
+      StyleTypes.each {|t| @list[t] = [] }
     end
 
     klass.extend(Lists)
@@ -36,10 +36,10 @@ module GTRubyConfigurator
   module Lists
 
     # define class methods to read lists of attributes
-    ConfigTypes.each {|t| define_method "list_#{t}", lambda{@list[t]} }
+    StyleTypes.each {|t| define_method "list_#{t}", lambda{@list[t]} }
 
-    def configuration_attributes
-      ConfigTypes.map{|t| @list[t].sort_by(&:to_s)}.flatten
+    def style_attributes
+      StyleTypes.map{|t| @list[t].sort_by(&:to_s)}.flatten
     end
 
   end
@@ -61,30 +61,30 @@ module GTRubyConfigurator
     #
     # the following instance methods are defined:
     #
-    # * #section : name of the corresponding configuration section
+    # * #section : name of the corresponding style section
     #
-    # * #default : hash with all values of the configuration
-    #              attributes for this section from config/value.lua
+    # * #default : hash with all values of the style attributes 
+    #              for this section from config/default.style
     #
-    # * #local : hash with all values of the configuration
-    #            attributes for this section from the current instance
+    # * #local : hash with all values of the style attributes
+    #            for this section from the current instance
     #
-    # * #remote : hash with all values of the configuration
-    #             attributes for this section from the gt config object
+    # * #remote : hash with all values of the style attributes
+    #             for this section from the GT::Style object
     #
-    # * #sync? : is local == remote for all configuration attributes?
+    # * #sync? : is local == remote for all style attributes?
     #
     # * #not_sync : an array of arrays in the form:
     #              [attribute, local value, remote value]
     #              for each not synchronized attribute
     #
-    # * #upload : set all configuration attributes for this section
-    #             in the gt config to the current instance values
+    # * #upload : set all style attributes for this section
+    #             in the GT::Style to the current instance values
     #
     # * #upload_except(*attrs) : uploads all attributes except attrs
     #
-    # * #download : set the current instance configuration attributes
-    #               to the values from the corresponding gt config
+    # * #download : set the current instance style attributes
+    #               to the values from the corresponding GT::Style
     #
     # * #download_except(*attrs) : download all attributes except attrs
     #
@@ -97,21 +97,21 @@ module GTRubyConfigurator
         upload_except # no exceptions
       end
       define_method :upload_except do |*not_to_upload|
-        attrs = self.class.configuration_attributes - not_to_upload
+        attrs = self.class.style_attributes - not_to_upload
         attrs.each {|attr| send("upload_#{attr}")}
       end
       define_method :download do
         download_except # no exceptions
       end
       define_method :download_except do |*not_to_upload|
-        attrs = self.class.configuration_attributes - not_to_upload
+        attrs = self.class.style_attributes - not_to_upload
         attrs.each {|attr| send("download_#{attr}")}
       end
       define_method :sync? do
-        self.class.configuration_attributes.all? {|a| send("#{a}_sync?")}
+        self.class.style_attributes.all? {|a| send("#{a}_sync?")}
       end
       define_method :not_sync do
-        self.class.configuration_attributes.map do |attr|
+        self.class.style_attributes.map do |attr|
           send("#{attr}_sync?") ? nil :
             [attr, send(attr), send("remote_#{attr}")]
         end.compact
@@ -121,7 +121,7 @@ module GTRubyConfigurator
     def values_fetcher(prefix)
       lambda do
         hsh = {}
-        self.class.configuration_attributes.each do |attr|
+        self.class.style_attributes.each do |attr|
           hsh[attr] = send("#{prefix}#{attr}")
         end
         hsh
@@ -149,44 +149,44 @@ module GTRubyConfigurator
     #
     # effect:
     #
-    # * populates the lists of attributes returned by .list_<config_type>
-    #   and .configuration_attributes
+    # * populates the lists of attributes returned by .list_<style_type>
+    #   and .style_attributes
     #
     # * the following instance methods are available for each attribute:
     #
     #     #<attr>            : works as usual (set instance value)
     #     #<attr>=           : works as usual (get instance value)
-    #     #remote_<attr>     : get gt config value
-    #     #remote_<attr>=(v) : set gt config value
+    #     #remote_<attr>     : get GT::Style value
+    #     #remote_<attr>=(v) : set GT::Style value
     #     #sync_<attr>=(v)   : set both local and remote
     #     #default_<attr>    : get value from config/default.style
     #     #<attr>_sync?      : local == remote?
-    #     #upload_<attr>     : instance => gt config
-    #     #download_<attr>   : gt config => instance
+    #     #upload_<attr>     : local Style => GT::Style
+    #     #download_<attr>   : GT::Style => local Style
     #
-    ConfigTypes.each do |config_type|
-      define_method "set_#{config_type}" do |*syms|
-        define_macro(config_type, *syms)
+    StyleTypes.each do |style_type|
+      define_method "set_#{style_type}" do |*syms|
+        define_macro(style_type, *syms)
       end
     end
 
     private
 
-    def define_macro(config_type, *syms)
+    def define_macro(style_type, *syms)
       # add symbols to lists
-      class_eval {@list[config_type] += syms}
+      class_eval {@list[style_type] += syms}
       syms.each do |attr|
         # map aggregations to attributes
-        mapper = "#{config_type}_mapper"
+        mapper = "#{style_type}_mapper"
         send(mapper, attr) if respond_to?(mapper, true)
         # define the instance methods
-        define_method "remote_#{attr}", remote_getter(attr, config_type)
-        define_method "remote_#{attr}=", remote_setter(attr, config_type)
+        define_method "remote_#{attr}", remote_getter(attr, style_type)
+        define_method "remote_#{attr}=", remote_setter(attr, style_type)
         define_method "sync_#{attr}=", sync_setter(attr)
         define_method "#{attr}_sync?", sync_tester(attr)
         define_method "upload_#{attr}", uploader(attr)
         define_method "download_#{attr}", downloader(attr)
-        define_method "default_#{attr}", default_reader(attr, config_type)
+        define_method "default_#{attr}", default_reader(attr, style_type)
       end
     end
 
@@ -206,13 +206,13 @@ module GTRubyConfigurator
                                 end
     end
 
-    def styles_mapper(sym)
+    def block_styles_mapper(sym)
       composed_of sym,
-                  :class_name => "Style",
+                  :class_name => "BlockStyle",
                   :mapping => [ ["#{sym}_key", "key"] ] do |v|
                                 case v
-                                when nil : "undefined".to_style
-                                when String : v.to_style
+                                when nil : "undefined".to_block_style
+                                when String : v.to_block_style
                                 else v
                                 end
                               end
@@ -227,42 +227,42 @@ module GTRubyConfigurator
       end
     end
 
-    def remote_getter(attr, config_type, from = nil)
+    def remote_getter(attr, style_type, from = nil)
       cast =
-        case config_type
+        case style_type
           when :colors : lambda {|v| v.nil? ? Color.undefined : Color(v)}
-          when :styles : lambda {|v| v.nil? ? Style.undefined : v.to_style}
+          when :block_styles : lambda {|v| v.nil? ? BlockStyle.undefined : v.to_block_style}
           when :integers : lambda {|v| v.nil? ? nil : v.to_i}
-          when :floats   : lambda {|v| v.nil? ? nil : v.to_f}
-          else             lambda {|v| v}
+          when :floats : lambda {|v| v.nil? ? nil : v.to_f}
+          else lambda {|v| v}
         end
       return lambda do
-        raise "no place to get from" unless configuration
-        gtr_type = GTRubyType[config_type]
-        config_obj = from || configuration.gt(section, attr)
-        raw = config_obj.send("get_#{gtr_type}", section, attr.to_s)
+        raise "no place to get from" unless style
+        gtr_type = GTType[style_type]
+        style_obj = from || style.gt(section, attr)
+        raw = style_obj.send("get_#{gtr_type}", section, attr.to_s)
         value = cast.bind(self).call(raw)
       end
     end
 
-    def remote_setter(attr, config_type, to = nil)
+    def remote_setter(attr, style_type, to = nil)
       cast =
-        case config_type
+        case style_type
           when :colors : lambda {|v| (v.nil? or v.undefined?) ? nil : v.to_gt}
-          when :styles : lambda {|v| (v.nil? or v.undefined?) ? nil : v.to_s}
+          when :block_styles : lambda {|v| (v.nil? or v.undefined?) ? nil : v.to_s}
           when :floats : lambda {|v| v.nil? ? nil : v.to_f}
           when :integers : lambda {|v| v.nil? ? nil : v.to_f}
-          else             lambda {|v| v}
+          else lambda {|v| v}
         end
       return lambda do |value|
-        raise "no place to set into" unless configuration
-        config_obj = to || configuration.gt(section, attr)
+        raise "no place to set into" unless style
+        style_obj = to || style.gt(section, attr)
         casted = cast.bind(self).call(value)
         if casted.nil?
-          config_obj.send("unset", section, attr.to_s)
+          style_obj.send("unset", section, attr.to_s)
         else
-          gtr_type = GTRubyType[config_type]
-          config_obj.send("set_#{gtr_type}", section, attr.to_s, casted)
+          gtr_type = GTType[style_type]
+          style_obj.send("set_#{gtr_type}", section, attr.to_s, casted)
         end
         return casted
       end
@@ -276,8 +276,8 @@ module GTRubyConfigurator
 
     ### default reader ###
 
-    def default_reader(attr, config_type)
-      remote_getter(attr, config_type, Configuration.default)
+    def default_reader(attr, style_type)
+      remote_getter(attr, style_type, Style.default)
     end
 
     ### synchronization methods ###

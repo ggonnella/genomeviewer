@@ -1,19 +1,19 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class GTRubyConfiguratorTest < ActiveSupport::TestCase
+class GTStyleInterfaceTest < ActiveSupport::TestCase
 
   def setup
-    @conf = Configuration.new 
+    @style = Style.new 
     @section = {}
     @section['format'] = Format.new
-    @section['format'].configuration = @conf
-    @conf.format = @section['format']
+    @section['format'].style = @style
+    @style.format = @section['format']
     @section['format'].save
     @section['format'] = Format.default_new
     @section['exon']   = FeatureType.new(:name => "exon")
-    @conf.feature_types << @section['exon']
+    @style.feature_types << @section['exon']
     @section['exon']   = FeatureType.default_new(:name => "exon")
-    @gt = GTServer.config(@conf.id)
+    @gt = GTServer.style(@style.id)
   end
 
   ### instance methods defined by set_section ###
@@ -37,7 +37,7 @@ class GTRubyConfiguratorTest < ActiveSupport::TestCase
     assert !@section['format'].sync?
     @section['exon'][:max_num_lines] = 77
     assert !@section['exon'].sync?
-    remote_value = GTServer.config(@conf.id).get_num("exon", "max_num_lines")
+    remote_value = GTServer.style(@style.id).get_num("exon", "max_num_lines")
     assert @section['exon'].not_sync.include?([:max_num_lines, 77, remote_value])
   end
 
@@ -54,7 +54,7 @@ class GTRubyConfiguratorTest < ActiveSupport::TestCase
     end
   end
 
-  ### instance methods defined by set_<config_type> ###
+  ### instance methods defined by set_<style_type> ###
 
   test_fixtures = [
     {:type => "decimals", :section => "format", :gtrget => :get_num,
@@ -71,9 +71,9 @@ class GTRubyConfiguratorTest < ActiveSupport::TestCase
      :attr => "split_lines", :value => false, :undefined => nil},
     {:type => "integers", :section => "exon", :gtrget => :get_num,
      :attr => "max_num_lines", :value => 999, :undefined => nil},
-    {:type => "styles", :section => "exon", :gtrget => :get_cstr,
-     :attr => "style", :value => "caret".to_style,
-     :undefined => Style.undefined}
+    {:type => "block_styles", :section => "exon", :gtrget => :get_cstr,
+     :attr => "block_style", :value => "caret".to_block_style,
+     :undefined => BlockStyle.undefined}
   ]
 
   test_fixtures.each do |x|
@@ -83,8 +83,8 @@ class GTRubyConfiguratorTest < ActiveSupport::TestCase
       when "colors"
         assert_equal Color(@gt.send(x[:gtrget], x[:section], x[:attr])),
                      @section[x[:section]].send("remote_#{x[:attr]}")
-      when "styles"
-        assert_equal @gt.send(x[:gtrget], x[:section], x[:attr]).to_style,
+      when "block_styles"
+        assert_equal @gt.send(x[:gtrget], x[:section], x[:attr]).to_block_style,
                      @section[x[:section]].send("remote_#{x[:attr]}")
       else
         assert_equal @gt.send(x[:gtrget], x[:section], x[:attr]),
@@ -101,7 +101,7 @@ class GTRubyConfiguratorTest < ActiveSupport::TestCase
         assert_equal x[:value],
                      Color(@section[x[:section]].send("remote_#{x[:attr]}=",
                                                       x[:value]))
-      when "styles"
+      when "block_styles"
         assert_equal x[:value].to_s,
                 @section[x[:section]].send("remote_#{x[:attr]}=", x[:value])
       else
@@ -156,7 +156,7 @@ class GTRubyConfiguratorTest < ActiveSupport::TestCase
       when "colors"
         assert_equal x[:value],
                      Color(@section[x[:section]].send("upload_#{x[:attr]}"))
-      when "styles"
+      when "block_styles"
         assert_equal x[:value].to_s,
                      @section[x[:section]].send("upload_#{x[:attr]}")
       else
