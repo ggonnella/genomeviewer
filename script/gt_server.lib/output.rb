@@ -1,8 +1,6 @@
 #
-# output methods as image (png format) and image map on the png image
-#
-# these methods assume that the parameters are correct,
-# that is they must be validated at higher level or can
+# parameters are assumed to be correct and 
+# must be validated at higher level or can
 # bring the gtserver to crash
 #
 module Output
@@ -10,11 +8,11 @@ module Output
   require "benchmark"
 
   #
-  # this saves the resulting image and map under an unique
-  # identifier which can be used subsequently to fetch them
+  # this saves the resulting image under a key 
+  # which can be used subsequently to fetch it
   #
   # parameters:
-  # - key:             indentifier of the parameter set
+  # - key
   # - filename:        string
   # - seq_id:          string
   # - range:           a ruby Range object
@@ -33,26 +31,18 @@ module Output
   #
   # gt_ruby_type is one of: bool, cstr, color, num
   #
-  # returns true if the image and map could be successfully generated,
-  # false if any exception was raised during the generation
-  #
-  def img_and_map_generate(key,
-                           filename,
-                           seqid,
-                           range,
-                           style_obj,
-                           width,
-                           add_introns,
-                           style_override = [])
-
-    log "generating img/map #{key}"
+  def generate(key, filename, seqid, range, style_obj, width, add_introns, 
+             style_override, return_image_info)
+    
+    log "generating img/info #{key}"
     log filename, 2
     log "#{seqid}, #{range.inspect}", 2
+    
+    info = ""
+    
     time = Benchmark.measure do
       style_copy = style_obj.clone
-      style_override.each do |option|
-        gt_ruby_type, section,
-        attribute, value = option
+      style_override.each do |gt_ruby_type, section, attribute, value|
         if value.nil?
           style_copy.unset(section, attribute)
         else
@@ -69,40 +59,14 @@ module Output
       layout  = GT::Layout.new(diagram, width, style_copy)
       canvas  = GT::CanvasCairoFile.new(style_copy, width, layout.get_height, info)
       layout.sketch(canvas)
-      lock(:map) do
-        @cache[:map][key] = info
-      end
       lock(:img) do
         @cache[:img][key] = canvas.to_stream
       end
     end
     log "done (%.4fs)" % time.real, 3
-    return true
-  rescue => err
-    log "ERROR: #{err}", 3
-    return false
+    return info if return_image_info
   end
-
-  #
-  # empty the img/map saved under a key value
-  #
-  def img_and_map_destroy(key)
-    d = []
-    [:map, :img].each do |mode|
-      lock(mode) do
-        d << @cache[mode].delete(key)
-      end
-    end
-    d.compact!
-    unless d.empty?
-      log "#{key}: img/map deleted"
-      return d
-    else
-      log "#{key}: no img/map found"
-      return nil
-    end
-  end
-
+  
   #
   # returns the image saved under the specified key or nil
   #
@@ -112,32 +76,13 @@ module Output
       delete ? @cache[:img].delete(key) : @cache[:img].fetch(key, nil)
     end
   end
-
-  #
-  # returns the image map saved under the specified key or nil
-  #
-  def map(key, delete = true)
-    log("image map #{key}")
-    lock(:map) do
-      delete ? @cache[:map].delete(key) : @cache[:map].fetch(key, nil)
-    end
-  end
-
+  
   #
   # is there a generated img for the key 'key'?
   #
   def img_exists?(key)
     lock(:img) do
       @cache[:img].has_key?(key)
-    end
-  end
-
-  #
-  # is there a generated map for the key 'key'?
-  #
-  def map_exists?(key)
-    lock(:map) do
-      @cache[:map].has_key?(key)
     end
   end
 
