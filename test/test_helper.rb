@@ -53,4 +53,18 @@ class Test::Unit::TestCase
     @_ft = @_a.feature_types[0]
   end
 
+  #
+  # an username certified not to exist
+  #
+  def unknown_username
+    rand_username="" 
+    64.times { rand_username += rand(10).to_s }
+    if User.find_by_username(rand_username)
+      # try again
+      return unknown_username
+    else
+      return rand_username
+    end
+  end
+  
 end
