@@ -1,5 +1,5 @@
 <div id="image">
-  <img src="/image/<%=@key%>" usemap='#imap' alt=''/>
+  <img src="/image/<%=@user.username%>/<%=@annotation.name%>/<%=@sequence_region.seq_id%>/<%=@start%>/<%=@end%>" usemap='#imap' alt=''/>
   <%= map_tag @info %>
 </div>
 <%= draggable_element :image, 
