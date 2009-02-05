@@ -105,49 +105,38 @@ class GtServerTest < ActiveSupport::TestCase
   ### module Output ###
 
   def test_generate_and_destroy
-    uuid = UUID.random_create.to_s
-    args = uuid, "test/gff3/little1.gff3", "test1", (1000..9000),
-           GTServer.style_default, 100, false
-    assert !GTServer.img_exists?(uuid)
-    assert !GTServer.map_exists?(uuid)
-    assert GTServer.img_and_map_generate(*args)
-    assert GTServer.img_exists?(uuid)
-    assert GTServer.map_exists?(uuid)
-    assert_not_nil GTServer.img_and_map_destroy(uuid)
+    args = "TEST", "test/gff3/little1.gff3", "test1", (1000..9000),
+           GTServer.style_default, 100, false, [], false
+    assert !GTServer.img_exists?("TEST")
+    GTServer.generate(*args) # create the image
+    assert GTServer.img_exists?("TEST")
   end
 
   def test_image
     filename = "test/gff3/standard_gene_with_introns_as_tree.gff3"
     style = GTServer.style_default
     [true, false].each do |add_introns|
-      uuid = UUID.random_create.to_s
-      GTServer.img_and_map_generate(uuid,
-                                    filename,
-                                    "ctg123",
-                                    (1..1497228),
-                                    style,
-                                    100,
-                                    add_introns)
-      png_data = GTServer.img(uuid)
+      args = "TEST", filename, "ctg123", (1..1497228), 
+             style, 100, add_introns, [], false
+      GTServer.generate(*args)
+      png_data = GTServer.img("TEST")
       assert png_data.size > 1000
       assert_equal "PNG", png_data[1..3]
-      # teardown:
-      GTServer.img_and_map_destroy(uuid)
     end
   end
 
   def test_image_map
-    uuid = UUID.random_create.to_s
-    args = uuid, "test/gff3/little1.gff3", "test1", (1000..9000),
-           GTServer.style_default, 100, false
-    GTServer.img_and_map_generate(*args)
-    info = GTServer.map(uuid)
+    args = "TEST", "test/gff3/little1.gff3", "test1", (1000..9000),
+           GTServer.style_default, 100, false, [], true
+    info = GTServer.generate(*args)
     info.each_hotspot do |a,b,c,d,feat|
       assert_equal [30,100,70,116], [a, b, c, d]
-      assert_equal "gene1", feat.get_attribute("ID")
+      assert_equal "gene", feat.get_type
     end
-    # teardown:
-    GTServer.img_and_map_destroy(uuid)
+  end
+
+  def teardown
+    GTServer.img("TEST", true)
   end
 
 end
