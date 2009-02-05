@@ -64,9 +64,19 @@ ActionController::Routing::Routes.draw do |map|
               :action => 'user'
   
   # all other URLs are interpreted as viewer URLs
-  map.image 'image/:uuid',
+  map.image 'image/:username/:annotation/:seq_region/:start_pos/:end_pos',
               :action => "image",
-              :controller => "viewer"
+              :controller => "viewer",
+              :annotation => /[^\/]+\.?[^\/]*/,
+              :seq_region => nil,
+              :start_pos => nil,
+              :end_pos => nil 
+              
+  map.overview 'overview/:username/:annotation/:seq_region',
+              :action => "overview",
+              :controller => "viewer",
+              :annotation => /[^\/]+\.?[^\/]*/,
+              :seq_region => nil
               
   map.move 'move/:username/:annotation/:seq_region/:start_pos/:end_pos',
               :action => "ajax_movement",
