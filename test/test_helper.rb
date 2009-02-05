@@ -35,7 +35,7 @@ class Test::Unit::TestCase
   # - @_a => annotation
   # - @_sr => sequence region
   # - @_ft => feature type
-  # - @_c => configuration
+  # - @_c => style
   # - @_f => format
   #
   def user_setup
@@ -43,17 +43,14 @@ class Test::Unit::TestCase
                       :password => "_pass",
                       :name => "_user",
                       :email => "an_user@test.tst")
-    @_u.reset_configuration
-    @_c = @_u.configuration
+    @_u.reset_style
+    @_s = @_c = @_u.style #@_c left for retrocompatibility TODO: move all ref to @_s
     @_f = @_c.format
     @_a = Annotation.create(:gff3_data => IO.read("test/gff3/little1.gff3"),
                             :name => "_little1.gff3",
                             :user => @_u)
     @_sr = @_a.sequence_regions[0]
     @_ft = @_a.feature_types[0]
-    return true
-  rescue
-    return false
   end
 
 end
