@@ -9,6 +9,7 @@ module GT
         hotspot[2] = x2
         hotspot[3] = y2
         feature = {}
+        fn.update_attribs
         feature[:ID] = fn.get_attribute("ID")
         feature[:range] = fn.get_range
         feature[:type] = fn.get_type
