@@ -14,7 +14,7 @@ class FeatureTypesController < ApplicationController
 
     # the columns array is built dinamically, using the lists
     # provided by the FeatureType model
-    config.columns = [:name] + FeatureType.configuration_attributes
+    config.columns = [:name] + FeatureType.style_attributes
 
     # allow sorting of the aggregates' columns:
     FeatureType.list_colors.each do |c|
