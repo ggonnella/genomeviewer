@@ -24,7 +24,7 @@ namespace :db do
     desc "Load standard guest user in the database"
     task :load => :environment do 
       file = "db/default_data/guest_user.yml"
-      example_user = YAML.load(IO.read file)
+      guest_user = YAML.load(IO.read file)
       puts "-- create guest user"
       u = User.create(guest_user)
       puts "   -> done"
