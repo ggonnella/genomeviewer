@@ -1,4 +1,10 @@
 module ActiveScaffold
+  class ControllerNotFound < RuntimeError; end
+  class DependencyFailure < RuntimeError; end
+  class MalformedConstraint < RuntimeError; end
+  class RecordNotAllowed < SecurityError; end
+  class ReverseAssociationRequired < RuntimeError; end
+
   def self.included(base)
     base.extend(ClassMethods)
     base.module_eval do
@@ -53,27 +59,15 @@ module ActiveScaffold
 
       # defines the attribute read methods on the model, so record.send() doesn't find protected/private methods instead
       klass = self.active_scaffold_config.model
-      if klass.respond_to? :generated_methods?
-        # edge rails (2.0)
-        klass.define_attribute_methods unless klass.generated_methods?
-      else
-        # stable rails (1.2.3)
-        # NOTE define_read_methods is an *instance* method even though it adds methods to the *class*.
-        klass.new.send(:define_read_methods) if klass.read_methods.empty? && klass.generate_read_methods
-      end
+      klass.define_attribute_methods unless klass.generated_methods?
 
-      # set up the generic_view_paths (Rails 2.x)
-      if method_defined? :generic_view_paths
-        frontends_path = File.join(RAILS_ROOT, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends')
-
-        paths = self.active_scaffold_config.inherited_view_paths.clone 
-        ActionController::Base.view_paths.each do |dir|
-          paths << File.join(dir,"active_scaffold_overrides") if File.exists?(File.join(dir,"active_scaffold_overrides"))
-        end
-        paths << File.join(frontends_path, active_scaffold_config.frontend, 'views') if active_scaffold_config.frontend.to_sym != :default
-        paths << File.join(frontends_path, 'default', 'views')
-        self.generic_view_paths = paths
+      ActionController::Base.view_paths.each do |dir|
+        self.append_view_path(File.join(dir,"active_scaffold_overrides")) if File.exists?(File.join(dir,"active_scaffold_overrides"))
       end
+      if active_scaffold_config.frontend.to_sym != :default
+        self.append_view_path(File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends', active_scaffold_config.frontend.to_s , 'views'))
+      end
+      self.append_view_path(File.join(Rails.root, 'vendor', 'plugins', ActiveScaffold::Config::Core.plugin_directory, 'frontends', 'default' , 'views'))
 
       # include the rest of the code into the controller: the action core and the included actions
       module_eval do
@@ -83,7 +77,7 @@ module ActiveScaffold
         include ActiveScaffold::Actions::Core
         active_scaffold_config.actions.each do |mod|
           name = mod.to_s.camelize
-          include eval("ActiveScaffold::Actions::#{name}") if ActiveScaffold::Actions.const_defined? name
+          include "ActiveScaffold::Actions::#{name}".constantize rescue nil
 
           # sneak the action links from the actions into the main set
           if link = active_scaffold_config.send(mod).link rescue nil

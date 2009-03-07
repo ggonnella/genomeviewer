@@ -10,18 +10,21 @@
         <div id="<%= active_scaffold_messages_id -%>">
           <%= render :partial => 'messages' %>
         </div>
+        <p class="filtered-message" <%= ' style="display:none;" ' unless @filtered %>>
+          <%= as_(active_scaffold_config.list.filtered_message) %>
+        </p>
         <p id="<%= empty_message_id %>" class="empty-message" <%= ' style="display:none;" ' unless @page.items.empty? %>>
-          <%= as_('No Entries') %>
+          <%= as_(active_scaffold_config.list.no_entries_message) %>
         </p>
       </td>
     </tr>
   </tbody>
   <tbody class="records" id="<%= active_scaffold_tbody_id %>">
     <% if !@records.empty? -%>
-      <%= render :partial => 'list_record', :collection => @page.items, :locals => { :hidden => false } %>
-      <% if active_scaffold_config.list.columns.any? {|c| c.calculation?} -%>
-        <%= render :partial => 'list_calculations' %>
-      <% end -%>
+      <%= render :partial => 'list_record', :collection => @page.items, :locals => { :hidden => false, :dont_show_calculations => true } %>
+    <% end -%>
+    <% if active_scaffold_config.list.columns.any? {|c| c.calculation?} -%>
+      <%= render :partial => 'list_calculations' %>
     <% end -%>
   </tbody>
 </table>
