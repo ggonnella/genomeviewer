@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090307103737) do
+ActiveRecord::Schema.define(:version => 20090307111920) do
 
   create_table "annotations", :force => true do |t|
     t.string  "name",        :default => "",    :null => false
@@ -67,6 +67,18 @@ ActiveRecord::Schema.define(:version => 20090307103737) do
     t.float   "default_stroke_color_green", :default => 0.0
     t.float   "default_stroke_color_blue",  :default => 0.0
     t.integer "style_id",                   :default => 0
+    t.boolean "show_block_captions",        :default => true
+    t.boolean "show_track_captions",        :default => true
+    t.boolean "split_lines",                :default => true
+    t.float   "ruler_font_size",            :default => 0.0
+    t.float   "ruler_space",                :default => 0.0
+    t.float   "block_caption_font_size",    :default => 0.0
+    t.float   "block_caption_space",        :default => 0.0
+    t.float   "track_caption_font_size",    :default => 0.0
+    t.float   "track_caption_space",        :default => 0.0
+    t.float   "background_color_red",       :default => 1.0
+    t.float   "background_color_green",     :default => 1.0
+    t.float   "background_color_blue",      :default => 1.0
   end
 
   create_table "sequence_regions", :force => true do |t|
