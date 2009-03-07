@@ -9,21 +9,21 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 32) do
+ActiveRecord::Schema.define(:version => 20090307103737) do
 
   create_table "annotations", :force => true do |t|
     t.string  "name",        :default => "",    :null => false
     t.integer "user_id",     :default => 0,     :null => false
-    t.text    "description"
+    t.text    "description", :default => ""
     t.boolean "public",      :default => false, :null => false
     t.boolean "add_introns", :default => true,  :null => false
   end
 
   create_table "feature_type_in_annotations", :force => true do |t|
-    t.integer "annotation_id"
-    t.integer "feature_type_id"
-    t.integer "max_show_width"
-    t.integer "max_capt_show_width"
+    t.integer "annotation_id",       :default => 0
+    t.integer "feature_type_id",     :default => 0
+    t.integer "max_show_width",      :default => 0
+    t.integer "max_capt_show_width", :default => 0
   end
 
   create_table "feature_types", :force => true do |t|
@@ -44,6 +44,8 @@ ActiveRecord::Schema.define(:version => 32) do
     t.integer "max_num_lines",       :default => 0
     t.integer "style_id",            :default => 0
     t.integer "max_show_width",      :default => 0
+    t.integer "bar_height",          :default => 15
+    t.integer "z_index",             :default => 0
   end
 
   create_table "formats", :force => true do |t|
@@ -72,11 +74,11 @@ ActiveRecord::Schema.define(:version => 32) do
     t.integer "annotation_id", :default => 0,  :null => false
     t.integer "seq_begin",     :default => 0,  :null => false
     t.integer "seq_end",       :default => 0,  :null => false
-    t.text    "description"
+    t.text    "description",   :default => ""
   end
 
   create_table "styles", :force => true do |t|
-    t.integer "user_id"
+    t.integer "user_id", :default => 0
     t.integer "width",   :default => 800, :null => false
   end
 
