@@ -5,11 +5,12 @@ class BlockStyle
       1 => "box",
       2 => "caret",
       3 => "dashes",
-      4 => "line"
+      4 => "line",
+      5 => "rectangle"
     }
 
   def initialize(key)
-    @key = ([1,2,3,4].include?(key.to_i) ? key.to_i : nil)
+    @key = (DefinedBlockStyles.keys.include?(key.to_i) ? key.to_i : nil)
   end
 
   attr_reader :key
