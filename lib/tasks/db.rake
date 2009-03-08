@@ -31,8 +31,25 @@ namespace :db do
     end
   end
   desc "Load schema (db:schema:load) and guest user"
-  task :load => ["db:schema:load", "db:guest_user:load"]
+  task :load => ["db:schema:load", "db:fix_defaults", "db:guest_user:load"]
   desc "Create the db schema and load example and guest users"
   task :load_with_foo => ["db:load", "db:example_user:load"]
+  desc "Run a fix for the consequences of a sqlite3 adapter bug"
+  task :fix_defaults => :environment do 
+    puts "-- dropping feature_type_in_annotations"
+    drop_sql = 'DROP TABLE "feature_type_in_annotations";'
+    puts "   -> done"
+    puts "-- recreating feature_type_in_annotations with correct default values"
+    create_sql = 'CREATE TABLE "feature_type_in_annotations" (
+        "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        "annotation_id" integer DEFAULT 0,
+        "feature_type_id" integer DEFAULT 0,
+        "max_show_width" integer default null,
+        "max_capt_show_width" integer default null
+      );'
+    puts "   -> done"
+    ActiveRecord::Base.connection.execute drop_sql
+    ActiveRecord::Base.connection.execute create_sql
+  end
 end
 
