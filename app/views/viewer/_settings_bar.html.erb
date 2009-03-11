@@ -1,4 +1,5 @@
 <div id="settings_bar">
+  <span class="settings_title"><%= seq_id_selector %><br/></span><br/>
   <span class="settings_title">Settings</span>
   &nbsp;&nbsp;(<%= link_to_visibility_toggle :of => "$('settings_form')"%>)
   <% form_tag({:action => :index, 
@@ -9,7 +10,6 @@
     <table>
       <tr>
         <td colspan=2>
-          <%= seq_id_selector %> - 
           Start:<%= text_field_tag 'start_pos', @start, 
                                    :size => 10, 
                                    :class => "nice" %> - 

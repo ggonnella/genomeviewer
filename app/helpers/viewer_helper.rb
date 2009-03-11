@@ -3,8 +3,10 @@ module ViewerHelper
   def seq_id_selector
     seqids = @sequence_regions.map(&:seq_id)
     opts = options_for_select(seqids, @sequence_region.seq_id)
-    "Sequence: "+
-    select_tag("seq_region", opts, :id => "seq_id_selector")
+    "Sequence:&nbsp;&nbsp;"+
+    select_tag("seq_region", opts, :id => "seq_id_selector", 
+               :onchange => "window.location.href=($('settings_form').action+"+
+                             "$('seq_id_selector').value);")
   end
 
   #
@@ -20,7 +22,6 @@ module ViewerHelper
   #
   def settings_form_submit
     <<-end_js
-      seq_id = $("seq_id_selector").value;
       sp = $("start_pos").value;
       ep = $("end_pos").value;
       url_prefix = form.action;
