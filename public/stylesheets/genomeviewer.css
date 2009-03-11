@@ -102,16 +102,11 @@ h1, h2, h3, h4, h5, h6 {
  color: red;
 }
 
-/* viewer box */
-
-#viewer_box {
-  border: 1px solid black;
-}
-
 /* settings bar */
 
 #settings_bar {
   background: rgb(60%, 60%, 90%);
+  border-top: 1px solid black;
   border-bottom: 1px solid black;
   font-size: 70%;
   padding: 5px;
@@ -143,9 +138,12 @@ h1, h2, h3, h4, h5, h6 {
 
 #buttons_bar {
   background: rgb(70%, 70%, 100%);
+  border-top: 1px solid black;
   border-bottom: 1px solid black;
   padding-left: 20px;
   padding-top: 5px;
+  position: relative;
+  top: 100px;
 }
 
 #buttons_bar a {
