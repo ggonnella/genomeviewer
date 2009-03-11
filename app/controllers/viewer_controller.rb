@@ -232,6 +232,23 @@ private
   end
 
 
+  #
+  # Determine the settings for the feature types visualization.
+  #
+  # The checkboxes "show?" determine if a given feature type is to be visualized. 
+  # If not, it is hidden, using the setting max_show_width, putting its value to 0, 
+  # otherwise it is shown (in the default case, putting the value of max_show_width
+  # to nil). If a value is written in the "up to ... nt" text field, then the 
+  # max_show_width parameter is set to that value. 
+  #
+  # The second checkbox "with caption?" determines if a caption is to be shown. 
+  # If not, then a value of 0 is set for max_capt_show_width. If it is to be shown 
+  # then that parameter is set to nil and or if a value is specified in the "up to ... nt"
+  # text field, that value is used for the max_capt_show_width parameter. 
+  #
+  # The set parameters returned by this method are saved in the variable @ft_settings 
+  # in the initialisation method and later used in the style_override method. 
+  #
   def determine_ft_settings
     ft_settings = {}
     if params[:commit] ### settings form ###
