@@ -22,6 +22,7 @@ module ViewerHelper
   #
   def settings_form_submit
     <<-end_js
+      seq_id = $("seq_id_selector").value;
       sp = $("start_pos").value;
       ep = $("end_pos").value;
       url_prefix = form.action;
@@ -56,15 +57,15 @@ module ViewerHelper
 
   def ft_cb_capt_clicked(ftn)
     <<-end_js
-      if ($("ft[#{ftn}][capt]").checked)
+      if ($("ft_#{ftn}_capt").checked)
       {
-        ($("ft[#{ftn}][max_capt_show_width]").disabled = false);
-        ($("ft[#{ftn}][max_capt_show_width]").value = '');
+        ($("ft_#{ftn}_max_capt_show_width").disabled = false);
+        ($("ft_#{ftn}_max_capt_show_width").value = '');
       }
       else
       {
-        ($("ft[#{ftn}][max_capt_show_width]").disabled = true);
-        ($("ft[#{ftn}][max_capt_show_width]").value = '0');
+        ($("ft_#{ftn}_max_capt_show_width").disabled = true);
+        ($("ft_#{ftn}_max_capt_show_width").value = '0');
       }
     end_js
   end
