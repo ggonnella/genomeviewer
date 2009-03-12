@@ -33,23 +33,23 @@ module ViewerHelper
 
   def ft_cb_show_clicked(ftn)
     <<-end_js
-      if ($("ft[#{ftn}][show]").checked)
+      if ($("ft_#{ftn}_show").checked)
       {
-        ($("ft[#{ftn}][max_show_width]").disabled = false);
-        ($("ft[#{ftn}][max_show_width]").value = '');
-        ($("ft[#{ftn}][capt]").checked = true);
-        ($("ft[#{ftn}][capt]").disabled = false);
-        ($("ft[#{ftn}][max_capt_show_width]").disabled = false);
-        ($("ft[#{ftn}][max_capt_show_width]").value = '');
+        ($("ft_#{ftn}_max_show_width").disabled = false);
+        ($("ft_#{ftn}_max_show_width").value = '');
+        ($("ft_#{ftn}_capt").checked = true);
+        ($("ft_#{ftn}_capt").disabled = false);
+        ($("ft_#{ftn}_max_capt_show_width").disabled = false);
+        ($("ft_#{ftn}_max_capt_show_width").value = '');
       }
       else
       {
-        ($("ft[#{ftn}][max_show_width]").disabled = true);
-        ($("ft[#{ftn}][max_show_width]").value = '0');
-        ($("ft[#{ftn}][capt]").checked = false);
-        ($("ft[#{ftn}][capt]").disabled = true);
-        ($("ft[#{ftn}][max_capt_show_width]").disabled = true);
-        ($("ft[#{ftn}][max_capt_show_width]").value = '0');
+        ($("ft_#{ftn}_max_show_width").disabled = true);
+        ($("ft_#{ftn}_max_show_width").value = '0');
+        ($("ft_#{ftn}_capt").checked = false);
+        ($("ft_#{ftn}_capt").disabled = true);
+        ($("ft_#{ftn}_max_capt_show_width").disabled = true);
+        ($("ft_#{ftn}_max_capt_show_width").value = '0');
       }
     end_js
   end
