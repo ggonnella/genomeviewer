@@ -8,15 +8,24 @@ class PublicAnnotationsController < ApplicationController
   active_scaffold :annotations do |config|
 
     config.label = @title
-
+    
     config.columns = [:name, :description, :user, :sequence_regions]
-
+    
     # make it readonly, in addition exclude also show, which is uninteresting for the purpose
     [:create, :update, :new, :delete, :show].each do |act|
       config.actions.exclude act
     end
-
-    config.action_links.add :open, :type => :record, :page => true
+    
+    # link to "open" action (which redirects then to the Viewer)
+    config.action_links.add :open,
+                            :label => "Open",
+                            :type => :record,
+                            :page => true
+                            
+    config.action_links.add :download,
+                        :label => "Download",
+                        :type => :record,
+                        :page => true
 
   end
 
@@ -29,6 +38,15 @@ class PublicAnnotationsController < ApplicationController
                 :annotation => annotation.name,
                 :username   => annotation.user.username
   end
+
+  def download
+    annotation = Annotation.find(params["id"])
+    if !annotation.downloadable
+      redirect_to root_url 
+    else
+      send_file annotation.gff3_data_storage
+    end
+  end    
 
   #
   # an user's page
