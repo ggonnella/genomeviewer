@@ -166,7 +166,6 @@ h1, h2, h3, h4, h5, h6 {
 
 #orientation_bar {
   position: absolute;
-  border-bottom: 1px solid black;
   height: 100px;
 }
 
