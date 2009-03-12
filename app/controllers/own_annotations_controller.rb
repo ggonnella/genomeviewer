@@ -27,6 +27,11 @@ class OwnAnnotationsController < ApplicationController
                             :label => "Open",
                             :type => :record,
                             :page => true
+                            
+    config.action_links.add :download,
+                        :label => "Download",
+                        :type => :record,
+                        :page => true
   end
 
   #
@@ -39,6 +44,11 @@ class OwnAnnotationsController < ApplicationController
                 :annotation => annotation.name,
                 :username => annotation.user.username
   end
+  
+  def download
+    annotation = Annotation.find(params["id"])
+    send_file annotation.gff3_data_storage
+  end    
 
   ### ajax actions ###
 
