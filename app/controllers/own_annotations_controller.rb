@@ -82,7 +82,9 @@ class OwnAnnotationsController < ApplicationController
     annotation = Annotation.find(params[:id])
     annotation.downloadable = (params[:checked]=="downloadable")
     annotation.save
-    render :partial => 'list_actions', :locals => {:record => annotation, :url_options => {}}
+    render :partial => 'list_actions', 
+           :locals => {:record => annotation, 
+                        :url_options => {:id => params[:id]}}
   end
 
 
