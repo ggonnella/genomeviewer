@@ -19,8 +19,9 @@ class OwnAnnotationsController < ApplicationController
     config.create.link.label = "Upload&nbsp;GFF3"
     config.create.multipart = true
 
-    config.list.columns = [:name, :description, :sequence_regions, :public]
+    config.list.columns = [:name, :description, :sequence_regions, :public, :downloadable]
     config.columns[:public].label = "File&nbsp;Access"
+    config.columns[:downloadable].label = "Allow&nbsp;download?"
 
     # link to "open" action (which redirects then to the Viewer)
     config.action_links.add :open,
@@ -73,6 +74,18 @@ class OwnAnnotationsController < ApplicationController
     render :inline => '', :status => 200
   end
 
+  #
+  # turns on or off the "downloadable" bit of an annotation
+  # it is called by the "downloadable_column" helper
+  #
+  def downloadable_control
+    annotation = Annotation.find(params[:id])
+    annotation.downloadable = (params[:checked]=="downloadable")
+    annotation.save
+    render :partial => 'list_actions', :locals => {:record => annotation, :url_options => {}}
+  end
+
+
 private
 
   #
@@ -111,6 +124,6 @@ private
   alias_method :delete_authorized?, :own_record?
   alias_method :update_authorized?, :own_record?
   alias_method :list_authorized?,   :own_record?
-  before_filter :own_record?, :only => [:file_access_control, :open]
+  before_filter :own_record?, :only => [:file_access_control, :open, :download, :downloadable_control]
 
 end

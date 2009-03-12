@@ -33,6 +33,34 @@ module OwnAnnotationsHelper
   end
 
   #
+  # an active radio button group to turn on/off an
+  # annotation's downloadable bit using AJAX;
+  # this helper is used by active_scaffold for the "list" action's table
+  #
+  def downloadable_column(record)
+    make_it_downloadable = remote_function :url => {:action => :downloadable_control,
+                                               :id => record.id,
+                                               :checked => :downloadable},
+                                               :update => "actions_#{record.id}"
+    make_it_not_downloadable  = remote_function :url => {:action => :downloadable_control,
+                                               :id => record.id,
+                                               :checked => :not_downloadable},
+                                               :update => "actions_#{record.id}"
+    html = ""
+    html << (radio_button_tag "downloadable_#{record.id}",
+                              "downloadable", record.downloadable,
+                              :id => "downloadable_#{record.id}",
+                              :onclick => make_it_downloadable)
+    html << "Allow"
+    html << tag(:br)
+    html << (radio_button_tag "downloadable_#{record.id}",
+                              "not_downloadable", !record.downloadable,
+                              :id => "not_downloadable_#{record.id}",
+                              :onclick => make_it_not_downloadable)
+    html << "No&nbsp;downloads"
+    return html
+  end
+  #
   # display the annotation's description and allow to edit it
   # this helper is used by active_scaffold for the "list" action's table
   #
