@@ -9,14 +9,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090308172704) do
+ActiveRecord::Schema.define(:version => 20090312150116) do
 
   create_table "annotations", :force => true do |t|
-    t.string  "name",        :default => "",    :null => false
-    t.integer "user_id",     :default => 0,     :null => false
-    t.text    "description", :default => ""
-    t.boolean "public",      :default => false, :null => false
-    t.boolean "add_introns", :default => true,  :null => false
+    t.string  "name",         :default => "",    :null => false
+    t.integer "user_id",      :default => 0,     :null => false
+    t.text    "description",  :default => ""
+    t.boolean "public",       :default => false, :null => false
+    t.boolean "add_introns",  :default => true,  :null => false
+    t.boolean "downloadable"
   end
 
   create_table "feature_type_in_annotations", :force => true do |t|
